@@ -75,6 +75,11 @@ const SectionSystem = (props) => {
       id: "ips",
       title: "IP Addresses",
       description: "Displays IP addresses for all physical interfaces (IP-only display)"
+    },
+    containers: {
+      id: "containers",
+      title: "Containers",
+      description: "Displays running Docker apps"
     }
   };
 
@@ -93,10 +98,10 @@ const SectionSystem = (props) => {
   });
 
   // 映射成对应的标题和描述
-  oledPages = oledPages.map(page => ({
-    id: descriptions[page].id,
-    title: descriptions[page].title,
-    description: descriptions[page].description
+  oledPages = oledPages.map(page => descriptions[page] || { id: page, title: page, description: "" }).map(d => ({
+    id: d.id,
+    title: d.title,
+    description: d.description
   }));
 
   const [gpioFanModeIndex, setGpioFanModeIndex] = useState(4 - props.config.gpio_fan_mode);
