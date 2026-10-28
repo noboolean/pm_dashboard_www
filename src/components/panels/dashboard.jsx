@@ -13,7 +13,7 @@ import StorageCard from '../cards/storageCard.jsx';
 import MemoryCard from '../cards/memoryCard.jsx';
 import ProcessorCard from '../cards/processorCard.jsx';
 import NetworkCard from '../cards/networkCard.jsx';
-import { ModernTemperature, ModernProcessor, ModernMemory, ModernStorage, ModernNetwork, ModernSystem } from '../modern/modern.jsx';
+import { ModernTemperature, ModernProcessor, ModernMemory, ModernStorage, ModernNetwork, ModernSystem, ModernContainers } from '../modern/modern.jsx';
 
 import SmallExternalInputCard from '../smallCards/smallExternalInputCard.jsx';
 import SmallTemperatureCard from '../smallCards/smallTemperatureCard.jsx';
@@ -262,6 +262,7 @@ const DashboardPanel = (props) => {
               return <React.Fragment key={key}>{card.render(key)}</React.Fragment>;
             })}
             <ModernSystem data={data} />
+            <ModernContainers />
           </div>
       }
     </Panel >

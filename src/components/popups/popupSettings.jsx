@@ -8,7 +8,7 @@ import DataGridPro from "./dataGridPro.jsx"
 import { SettingItemSwitch, SettingItem, SettingItemButton } from './settingItems.jsx';
 import Divider from '@mui/material/Divider';
 
-const VERSIONS = "1.2.14-nb.3";
+const VERSIONS = "1.2.14-nb.4";
 
 const defaultConfigData = {
   "auto": {

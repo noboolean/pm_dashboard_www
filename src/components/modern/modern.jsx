@@ -212,3 +212,49 @@ export const ModernSystem = ({ data }) => {
     </Shell>
   );
 };
+
+const ctUptime = (status) => {
+  const m = /^Up\s+(.+?)(\s+\((healthy|unhealthy|health: starting)\))?$/i.exec(status || '');
+  if (!m) return status || '–';
+  return m[1].replace(/About an? /i, '1 ').replace(/ seconds?/, 's').replace(/ minutes?/, 'm').replace(/ hours?/, 'h').replace(/ days?/, 'd').replace(/ weeks?/, 'w').replace(/ months?/, 'mo').replace(/ years?/, 'y').replace(/^Less than 1s$/i, '<1s');
+};
+const ctColor = (c) => c.state !== 'running' ? (c.state === 'exited' ? '#8b95a7' : C.warn) : /unhealthy/i.test(c.status) ? C.hot : C.up;
+
+export const ModernContainers = () => {
+  const [list, setList] = React.useState(null);
+  const [err, setErr] = React.useState(false);
+  const [showAll, setShowAll] = React.useState(false);
+  React.useEffect(() => {
+    let alive = true;
+    const url = `${window.location.protocol}//${window.location.hostname}:34002/api/v1.0/get-containers`;
+    const load = () => fetch(url, { cache: 'no-store' }).then(r => r.json()).then(j => {
+      if (!alive) return;
+      if (j && j.status) { setList(j.data || []); setErr(false); } else setErr(true);
+    }).catch(() => alive && setErr(true));
+    load();
+    const t = setInterval(load, 5000);
+    return () => { alive = false; clearInterval(t); };
+  }, []);
+  const all = list || [];
+  const running = all.filter(c => c.state === 'running');
+  const apps = new Set(running.map(c => c.app));
+  const shown = showAll ? all : running;
+  return (
+    <Shell title="Containers" color={C.up} primary={list ? running.length : '–'} unit={list ? `running · ${apps.size} apps` : ''}
+      right={list && all.length > running.length ? <span className="mtoggle" onClick={() => setShowAll(!showAll)}>{showAll ? 'Running only' : `Show all (${all.length})`}</span> : null}>
+      {err && !list && <div style={{ opacity: .6, fontSize: 13 }}>Containers API unavailable</div>}
+      {list && <div className="mctable">
+        <div className="mcrow mchdr"><span>Name</span><span className="mcapp">App</span><span>State</span><span>Uptime</span></div>
+        {shown.map(c => (
+          <div className="mcrow" key={c.name} title={`${c.name}\n${c.image}\n${c.status}`}>
+            <span className="mcname"><i className="mdot" style={{ background: ctColor(c) }} />{c.service || c.name}</span>
+            <span className="mcapp">{c.app}</span>
+            <span style={{ color: ctColor(c) }}>{/unhealthy/i.test(c.status) ? 'unhealthy' : c.state}</span>
+            <span>{c.state === 'running' ? ctUptime(c.status) : '–'}</span>
+          </div>
+        ))}
+        {shown.length === 0 && <div style={{ opacity: .6, fontSize: 13 }}>No running containers</div>}
+      </div>}
+    </Shell>
+  );
+};
