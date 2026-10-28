@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom'; // 引入路由钩子
 import { Box } from '@mui/material';
 
@@ -13,6 +13,7 @@ import StorageCard from '../cards/storageCard.jsx';
 import MemoryCard from '../cards/memoryCard.jsx';
 import ProcessorCard from '../cards/processorCard.jsx';
 import NetworkCard from '../cards/networkCard.jsx';
+import { ModernTemperature, ModernProcessor, ModernMemory, ModernStorage, ModernNetwork, ModernSystem } from '../modern/modern.jsx';
 
 import SmallExternalInputCard from '../smallCards/smallExternalInputCard.jsx';
 import SmallTemperatureCard from '../smallCards/smallTemperatureCard.jsx';
@@ -166,11 +167,7 @@ const DashboardPanel = (props) => {
             request={props.request}
             unit={props.temperatureUnit || "C"}
           /> :
-          <TemperatureCard
-            data={data}
-            request={props.request}
-            unit={props.temperatureUnit || 'C'}
-          />
+<ModernTemperature data={data} unit={props.temperatureUnit || 'C'} />
       )
     },
 
@@ -218,21 +215,18 @@ const DashboardPanel = (props) => {
             data={data}
             mountSwitchChecked={props.mountSwitchChecked}
           /> :
-          <StorageCard
-            data={data}
-            mountSwitchChecked={props.mountSwitchChecked}
-          />
+<ModernStorage data={data} mountSwitchChecked={props.mountSwitchChecked} />
       )
     },
 
     memory: {
       visible: () => props.peripherals.includes('memory'),
-      render: () => isDashboardRoute ? <SmallMemoryCard data={data} /> : <MemoryCard data={data} />
+      render: () => isDashboardRoute ? <SmallMemoryCard data={data} /> : <ModernMemory data={data} />
     },
 
     network: {
       visible: () => props.peripherals.includes('network'),
-      render: () => isDashboardRoute ? <SmallNetworkCard data={data} /> : <NetworkCard data={data} />
+      render: () => isDashboardRoute ? <SmallNetworkCard data={data} /> : <ModernNetwork data={data} />
     },
 
     processor: {
@@ -243,15 +237,12 @@ const DashboardPanel = (props) => {
             data={data}
             processorChartAmount={props.processorChartAmount}
           /> :
-          <ProcessorCard
-            data={data}
-            processorChartAmount={props.processorChartAmount}
-          />
+<ModernProcessor data={data} />
       )
     }
   };
 
-  return (<Box sx={{ width: "100%", height: "100%", overflowY: "scroll", overflowX: "hidden" }}>
+  return (<Box sx={{ width: "100%", height: "100%", overflowY: "auto", overflowX: "hidden" }}>
     <Panel title={props.deviceName} {...props}>
       {
         // screenWidth === 800 ?
@@ -264,13 +255,14 @@ const DashboardPanel = (props) => {
             })}
           </Box>
           :
-          <Box sx={{ display: "flex", flexFlow: "wrap", gap: "70px 40px" }}>
+          <div className="mgrid">
             {props.cardLayout.map((key) => {
               const card = cardMap[key];
               if (!card || !card.visible()) return null;
-              return card.render(key);
+              return <React.Fragment key={key}>{card.render(key)}</React.Fragment>;
             })}
-          </Box>
+            <ModernSystem data={data} />
+          </div>
       }
     </Panel >
   </Box >

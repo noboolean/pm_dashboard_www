@@ -8,7 +8,7 @@ import DataGridPro from "./dataGridPro.jsx"
 import { SettingItemSwitch, SettingItem, SettingItemButton } from './settingItems.jsx';
 import Divider from '@mui/material/Divider';
 
-const VERSIONS = "1.2.14-nb.1";
+const VERSIONS = "1.2.14-nb.2";
 
 const defaultConfigData = {
   "auto": {
@@ -91,7 +91,7 @@ const defaultConfigData = {
 
 const PopupSettings = (props) => {
   const [config, setConfig] = useState(defaultConfigData);
-  const [themeSwitchChecked, setThemeSwitchChecked] = useState(window.localStorage.getItem("pm-dashboard-theme") === "dark" ? true : false);
+  const [themeSwitchChecked, setThemeSwitchChecked] = useState(window.localStorage.getItem("pm-dashboard-theme") !== "light");
 
   const [cardLayoutPopup, setCardLayoutPopup] = useState(false);
   const [newCardLayout, setNewCardLayout] = useState(props.cardLayout);

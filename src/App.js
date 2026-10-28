@@ -25,6 +25,7 @@ import './App.css';
 const darkTheme = createTheme({
   palette: {
     mode: "dark",
+    background: { default: "#0d1117", paper: "#151a23" },
     voltage: {
       main: lightGreen[500],
     },
@@ -241,7 +242,7 @@ const App = () => {
 
   if (theme === null) {
     let _theme = window.localStorage.getItem("pm-dashboard-theme");
-    if (_theme === null) _theme = "light"; // default theme
+    if (_theme === null) _theme = "dark"; // default theme
     changeTheme(_theme);
   }
 
