@@ -23,28 +23,8 @@ import SmallMemoryCard from '../smallCards/smallMemoryCard.jsx';
 import SmallNetworkCard from '../smallCards/smallNetworkCard.jsx';
 import SmallProcessorCard from '../smallCards/smallProcessorCard.jsx';
 
-const TEST_DATA = [
-  { time: new Date().getTime() },
-  { time: new Date().getTime() },
-  { time: new Date().getTime() },
-  { time: new Date().getTime() },
-  { time: new Date().getTime() },
-  { time: new Date().getTime() },
-  { time: new Date().getTime() },
-  { time: new Date().getTime() },
-  { time: new Date().getTime() },
-  { time: new Date().getTime() },
-  { time: new Date().getTime() },
-  { time: new Date().getTime() },
-  { time: new Date().getTime() },
-  { time: new Date().getTime() },
-  { time: new Date().getTime() },
-  { time: new Date().getTime() },
-  { time: new Date().getTime() },
-  { time: new Date().getTime() },
-  { time: new Date().getTime() },
-  { time: new Date().getTime() },
-];
+const TEST_DATA = [];
+const MAX_POINTS = 60;
 const DashboardPanel = (props) => {
   const [data, setData] = useState(TEST_DATA);
   const [updateDataInterval, setUpdateDataInterval] = useState(1000);
@@ -66,9 +46,8 @@ const DashboardPanel = (props) => {
         if (!_data.time) {
           _data.time = new Date().getTime();
         }
-        let newData = [...data];
-        if (newData.length >= 20) {
-          // newData.shift();
+        let newData = data.filter(d => Object.keys(d).length > 1);
+        while (newData.length >= MAX_POINTS) {
           newData.pop();
         }
         // newData.push(_data);
@@ -80,6 +59,23 @@ const DashboardPanel = (props) => {
       }
     }
   }
+
+  // Seed charts with recent history so graphs are not empty on load
+  const [seeded, setSeeded] = useState(false);
+  useEffect(() => {
+    if (seeded || !props.connected || !props.peripherals.includes('history')) return;
+    setSeeded(true);
+    (async () => {
+      const hist = await props.request("get-history", "GET", { n: MAX_POINTS }, true);
+      if (Array.isArray(hist) && hist.length > 0) {
+        // API returns newest first, which matches this panel's ordering
+        const sorted = [...hist].filter(d => d && Object.keys(d).length > 1)
+          .sort((a, b) => new Date(b.time) - new Date(a.time));
+        setData(prev => (prev.length > 0 ? [...prev, ...sorted].slice(0, MAX_POINTS) : sorted));
+      }
+    })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [props.connected, props.peripherals]);
 
   // 自动获取数据
   useEffect(() => {

@@ -1,7 +1,7 @@
 import React from 'react';
 import Card from './card.jsx';
 import Chart from './chart.jsx';
-import { timeFormatting } from '../../js/utils.js';
+import { timeFormatting, formatNetworkType } from '../../js/utils.js';
 import { useTheme } from '@mui/material/styles';
 
 const NetworkCard = (props) => {
@@ -24,7 +24,7 @@ const NetworkCard = (props) => {
   };
   let newData = props.data.map(obj => ({
     timestamp: timeFormatting(obj.time),
-    type: obj.network_type,
+    type: formatNetworkType(obj.network_type),
     upSpeed: obj.network_upload_speed, //可用
     downSpeed: obj.network_download_speed,
   }));
@@ -38,7 +38,7 @@ const NetworkCard = (props) => {
       details={detail}
       iconBoxColor={theme.palette.network.main}
       chart={<>
-        <Chart detail={detail} data={chartData} />
+        <Chart detail={detail} data={chartData} min={0} />
       </>}
       processorChartAmount={true}
       chartNumber={2}

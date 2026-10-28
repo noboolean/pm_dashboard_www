@@ -17,7 +17,7 @@ function firstUpperCase(string) {
 }
 
 function formatBytes(bytes, originalUnit = '') {
-  if (typeof bytes !== 'number') return '0';
+  if (typeof bytes !== 'number' || isNaN(bytes)) return '0';
   var units = ['', 'K', 'M', 'G', 'T'];
   var unitIndex = units.indexOf(originalUnit);
 
@@ -31,8 +31,26 @@ function formatBytes(bytes, originalUnit = '') {
 function timeFormatting(time) {
   const timeString = time;
   const dateTime = new Date(timeString);
-  const formattedTime = dateTime.toISOString().replace("T", " ").replace("Z", "");
-  return formattedTime;
+  if (isNaN(dateTime.getTime())) return "";
+  const pad = (n) => String(n).padStart(2, "0");
+  return `${dateTime.getFullYear()}-${pad(dateTime.getMonth() + 1)}-${pad(dateTime.getDate())} ${pad(dateTime.getHours())}:${pad(dateTime.getMinutes())}:${pad(dateTime.getSeconds())}`;
+}
+
+const VIRTUAL_IFACE_RE = /^(lo|docker\d*|veth|br-|virbr|umbrel-vm|tun|tap|wg|zt|cni|flannel|cali|vxlan|kube)/;
+function isPhysicalInterface(name) {
+  return !!name && !VIRTUAL_IFACE_RE.test(name);
+}
+
+function formatNetworkType(type) {
+  if (!type || typeof type !== 'string') return '-';
+  const parts = [...new Set(type.split('&').map(s => s.trim()).filter(Boolean))];
+  return parts.length ? parts.join(' / ') : '-';
+}
+
+function shortTime(time) {
+  const d = new Date(time);
+  if (isNaN(d.getTime())) return '';
+  return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false });
 }
 
 function celciusToFahrenheit(celcius) {
@@ -40,4 +58,4 @@ function celciusToFahrenheit(celcius) {
 }
 
 
-export { isNum, round, firstUpperCase, formatBytes, timeFormatting, celciusToFahrenheit };
+export { isNum, round, firstUpperCase, formatBytes, timeFormatting, celciusToFahrenheit, isPhysicalInterface, formatNetworkType, shortTime };

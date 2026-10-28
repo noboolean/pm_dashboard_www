@@ -96,7 +96,7 @@ const ProcessorCard = (props) => {
             {/* <div className='chartBos' style={{ gridTemplateColumns: props.isMobile || chartNumber === 2 ? "repeat(2, 1fr)" : `repeat(${chartNumber / 2}, 1fr)` }}> */}
             <div className='chartBos' style={{ gridTemplateColumns: chartNumber === 2 ? "repeat(2, 1fr)" : `repeat(${chartNumber / 2}, 1fr)` }}>
               {Object.values(newDataList).map((value, index) => (
-                <Chart key={index} detail={detail} data={value} min={0} max={100} />
+                <Chart key={index} detail={{ [`cpu_${index}_percent`]: detail[`cpu_${index}_percent`] }} data={value} min={0} max={100} compact={true} />
               ))}
             </div>
           </div> : <Chart detail={detail} data={frequencyData} min={0} max={100} />

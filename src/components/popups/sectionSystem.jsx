@@ -1,3 +1,4 @@
+import { isPhysicalInterface } from '../../js/utils.js';
 import React, { useState, useEffect } from 'react';
 import {
   Button,
@@ -80,6 +81,8 @@ const SectionSystem = (props) => {
   const ipData = {};
   const macData = {};
   Object.keys(props.latestData).forEach(key => {
+    const iface = key.replace(/^(ip_|mac_)/, '');
+    if ((key.startsWith('ip_') || key.startsWith('mac_')) && !isPhysicalInterface(iface)) return;
     if (key.startsWith('ip_')) {
       // 删除 'ip_' 前缀并存入 ipData
       ipData[key.replace('ip_', '')] = props.latestData[key];

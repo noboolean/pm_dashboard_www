@@ -9,7 +9,7 @@ const StorageCard = (props) => {
   let detail = {};
   let storageCardData = null;
   let diskData = [];
-  if (props.data.length >= 2) {
+  if (props.data.length >= 1) {
     // 由于选择最后一个对象有时数据是null
     storageCardData = props.data[props.data.length - 2];
     if (Object.keys(storageCardData).length === 1) {

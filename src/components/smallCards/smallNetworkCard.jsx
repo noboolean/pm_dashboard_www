@@ -1,7 +1,7 @@
 import React from 'react';
 import SmallCard from './smallCard.jsx';
 import SmallChart from './smallChart.jsx';
-import { timeFormatting } from '../../js/utils.js';
+import { timeFormatting, formatNetworkType } from '../../js/utils.js';
 import { useTheme } from '@mui/material/styles';
 import LanIcon from '@mui/icons-material/Lan';
 
@@ -25,7 +25,7 @@ const NetworkCard = (props) => {
   };
   let newData = props.data.map(obj => ({
     timestamp: timeFormatting(obj.time),
-    type: obj.network_type,
+    type: formatNetworkType(obj.network_type),
     upSpeed: obj.network_upload_speed, //可用
     downSpeed: obj.network_download_speed,
   }));
